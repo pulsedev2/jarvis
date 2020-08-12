@@ -31,6 +31,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -48,11 +49,11 @@ public class Main {
     // Creating shared object
     private static volatile BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue();
     private static TargetDataLine targetDataLine;
-    private static int BYTES_PER_BUFFER = 6400; // buffer size in bytes
+    private static final int BYTES_PER_BUFFER = 6400; // buffer size in bytes
 
     private static int restartCounter = 0;
-    private static ArrayList<ByteString> audioInput = new ArrayList<ByteString>();
-    private static ArrayList<ByteString> lastAudioInput = new ArrayList<ByteString>();
+    private static ArrayList<ByteString> audioInput = new ArrayList<>();
+    private static ArrayList<ByteString> lastAudioInput = new ArrayList<>();
     private static int resultEndTimeInMS = 0;
     private static int isFinalEndTime = 0;
     private static int finalRequestEndTime = 0;
@@ -66,9 +67,10 @@ public class Main {
     public static HashMap<String, City> cityHashMap = new HashMap<>();
     public static final String moduleFolder = "./modules";
 
-    public static void main(String... args) {
+    public static void main(String... args){
         initAllModule();
         initCityList();
+
         Main.play("src\\main\\resources\\go_on.wav");
         InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
         if (options == null) {
@@ -91,10 +93,18 @@ public class Main {
         }
     }
     public static void initAllModule(){
-        modules.add(WelcomeModule.class);
-        modules.add(HourAskModule.class);
-        modules.add(WeatherModule.class);
-        modules.add(ThanksModule.class);
+        File modulesFolder = new File("src\\main\\java\\fr\\pulsedev\\jarvis\\modules");
+        for(File module : Objects.requireNonNull(modulesFolder.listFiles())){
+            try {
+                Class<? extends Module> clazz = (Class<? extends Module>) Class.forName("fr.pulsedev.jarvis.modules." + module.getName().replace(".java", ""));
+                if(!clazz.getName().equals(Module.class.getName()) && !clazz.getName().equals(Error.class.getName())){
+                    modules.add(clazz);
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(modules.toString());
     }
 
     public static void initCityList(){

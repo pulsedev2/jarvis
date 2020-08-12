@@ -9,9 +9,7 @@ import fr.pulsedev.jarvis.modules.Module;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This file is a part of VoiceAssistant, located on fr.renardfute.jarvis
@@ -22,9 +20,10 @@ import java.util.Random;
  */
 public class PhraseRecognition implements Runnable {
 
-    Thread thread;
-    Phrase phrase;
-    HashMap<ItemsType, String> arguments = new HashMap<>();
+    private Thread thread;
+    private final Phrase phrase;
+    private final HashMap<ItemsType, String> arguments = new HashMap<>();
+    private final HashMap<Module, Integer> occurence = new HashMap<>();
 
     public void setThread(Thread thread) {
         this.thread = thread;
@@ -81,14 +80,28 @@ public class PhraseRecognition implements Runnable {
                 Module mod = constructor.newInstance(arguments);
                 for(String keyword : mod.getKeywords()){
                     if(phrase.words.contains(keyword)){
-                        return mod;
+                        occurence.merge(mod, 1, Integer::sum);
                     }
                 }
+
+                return (Module)sortByValue(occurence).keySet().toArray()[0];
+
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
         return null;
+    }
+
+    public HashMap<Module, Integer> sortByValue(HashMap<Module, Integer> toSort){
+        List<Map.Entry<Module, Integer>> list = new LinkedList<>(toSort.entrySet());
+
+        list.sort((o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
+        HashMap<Module, Integer> temp = new LinkedHashMap<>();
+        for(Map.Entry<Module, Integer> aa : list){
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
     }
 
     public void stopThread(){

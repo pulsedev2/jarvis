@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'fr.pulsedev'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.cloud:google-cloud-speech:1.24.0'
+    compile 'commons-cli:commons-cli:1.4'
+    compile 'com.google.cloud:google-cloud-texttospeech:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    compile 'org.json:json:20200518'
+    compile 'com.ibm.watson:ibm-watson:8.5.0'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+}

@@ -17,4 +17,5 @@ dependencies {
     compile 'org.json:json:20200518'
     compile 'com.ibm.watson:ibm-watson:8.5.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'net.contentobjects.jnotify:jnotify:0.94'
 }

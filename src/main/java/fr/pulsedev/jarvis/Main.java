@@ -17,6 +17,8 @@ import fr.pulsedev.jarvis.stt.InfiniteStreamRecognizeOptions;
 import fr.pulsedev.jarvis.stt.recognition.PhraseRecognition;
 import fr.pulsedev.jarvis.utils.MakeSound;
 import fr.pulsedev.jarvis.utils.PropertiesValue;
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -62,7 +64,32 @@ public class Main {
     public static List<Class<? extends Module>> modules = new ArrayList<>();
     public static Boolean muted = false;
     public static HashMap<String, City> cityHashMap = new HashMap<>();
+    public static final String moduleFolder = "./modules";
 
+    public static void main(String... args) {
+        initAllModule();
+        initCityList();
+        Main.play("src\\main\\resources\\go_on.wav");
+        InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
+        if (options == null) {
+            // Could not parse.
+            System.out.println("Failed to parse options.");
+            System.exit(1);
+        }
+
+        try {
+            infiniteStreamingRecognize(options.langCode);
+        } catch (Exception e) {
+            System.out.println("Exception caught: " + e);
+        }
+
+        int mask = JNotify.FILE_CREATED + JNotify.FILE_MODIFIED;
+        try {
+            JNotify.addWatch(moduleFolder, mask, true, new FileListener());
+        } catch (JNotifyException e) {
+            e.printStackTrace();
+        }
+    }
     public static void initAllModule(){
         modules.add(WelcomeModule.class);
         modules.add(HourAskModule.class);
@@ -133,23 +160,7 @@ public class Main {
         }
     }
 
-    public static void main(String... args) {
-        initAllModule();
-        initCityList();
-        Main.play("src\\main\\resources\\go_on.wav");
-        InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
-        if (options == null) {
-            // Could not parse.
-            System.out.println("Failed to parse options.");
-            System.exit(1);
-        }
 
-        try {
-            infiniteStreamingRecognize(options.langCode);
-        } catch (Exception e) {
-            System.out.println("Exception caught: " + e);
-        }
-    }
 
     public static String convertMillisToDate(double milliSeconds) {
         long millis = (long) milliSeconds;

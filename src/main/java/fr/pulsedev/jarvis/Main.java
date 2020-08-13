@@ -8,13 +8,10 @@ import com.google.common.html.HtmlEscapers;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import fr.pulsedev.jarvis.items.City;
-import fr.pulsedev.jarvis.modules.HourAskModule;
 import fr.pulsedev.jarvis.modules.Module;
-import fr.pulsedev.jarvis.modules.ThanksModule;
-import fr.pulsedev.jarvis.modules.WeatherModule;
-import fr.pulsedev.jarvis.modules.WelcomeModule;
 import fr.pulsedev.jarvis.stt.InfiniteStreamRecognizeOptions;
 import fr.pulsedev.jarvis.stt.recognition.PhraseRecognition;
+import fr.pulsedev.jarvis.ui.Window;
 import fr.pulsedev.jarvis.utils.MakeSound;
 import fr.pulsedev.jarvis.utils.PropertiesValue;
 import net.contentobjects.jnotify.JNotify;
@@ -66,11 +63,13 @@ public class Main {
     public static Boolean muted = false;
     public static HashMap<String, City> cityHashMap = new HashMap<>();
     public static final String moduleFolder = "./modules";
+    public static Window window;
 
     public static void main(String... args){
         initAllModule();
         initCityList();
 
+        window = new Window();
         Main.play("src\\main\\resources\\go_on.wav");
         InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
         if (options == null) {

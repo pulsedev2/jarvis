@@ -84,13 +84,13 @@ public class PhraseRecognition implements Runnable {
                     }
                 }
 
-                return (Module)sortByValue(occurence).keySet().toArray()[0];
+
 
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        return (Module)sortByValue(occurence).keySet().toArray()[0];
     }
 
     public HashMap<Module, Integer> sortByValue(HashMap<Module, Integer> toSort){

@@ -1,0 +1,10 @@
+.bubble {
+  display: inline-block;
+  max-width: 100px;
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin: 20px;
+  background-color: solid blue;
+  font-size: 120%;
+  text-decoration-color: white;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "jarvis-app",
+  "version": "1.0.0",
+  "description": "UI of jarvis",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "renardfute,niout",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^9.2.0"
+  }
+}

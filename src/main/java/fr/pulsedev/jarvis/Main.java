@@ -7,12 +7,10 @@ import com.google.cloud.speech.v1.*;
 import com.google.common.html.HtmlEscapers;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
+import fr.pulsedev.jarvis.decoder.ModulesDecoder;
 import fr.pulsedev.jarvis.items.City;
-import fr.pulsedev.jarvis.modules.HourAskModule;
+import fr.pulsedev.jarvis.modules.*;
 import fr.pulsedev.jarvis.modules.Module;
-import fr.pulsedev.jarvis.modules.ThanksModule;
-import fr.pulsedev.jarvis.modules.WeatherModule;
-import fr.pulsedev.jarvis.modules.WelcomeModule;
 import fr.pulsedev.jarvis.stt.InfiniteStreamRecognizeOptions;
 import fr.pulsedev.jarvis.stt.recognition.PhraseRecognition;
 import fr.pulsedev.jarvis.utils.MakeSound;
@@ -27,6 +25,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +67,7 @@ public class Main {
     public static final String moduleFolder = "./modules";
 
     public static void main(String... args){
+        //new ModulesDecoder().setUpModules();
         initAllModule();
         initCityList();
 
@@ -84,27 +84,19 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Exception caught: " + e);
         }
-
-        int mask = JNotify.FILE_CREATED + JNotify.FILE_MODIFIED;
-        try {
-            JNotify.addWatch(moduleFolder, mask, true, new FileListener());
-        } catch (JNotifyException e) {
-            e.printStackTrace();
-        }
     }
     public static void initAllModule(){
         File modulesFolder = new File("src\\main\\java\\fr\\pulsedev\\jarvis\\modules");
         for(File module : Objects.requireNonNull(modulesFolder.listFiles())){
             try {
                 Class<? extends Module> clazz = (Class<? extends Module>) Class.forName("fr.pulsedev.jarvis.modules." + module.getName().replace(".java", ""));
-                if(!clazz.getName().equals(Module.class.getName()) && !clazz.getName().equals(Error.class.getName())){
+                if(!clazz.getName().equals(Module.class.getName()) && !clazz.getName().equals(ErrorModule.class.getName())){
                     modules.add(clazz);
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println(modules.toString());
     }
 
     public static void initCityList(){
@@ -487,4 +479,6 @@ public class Main {
     public static String textToUrl(String text){
         return text.replaceAll(" ", "%20").replaceAll("é", "%C3%A9").replaceAll("è", "%C3%A8").replaceAll("à", "%C3%A0");
     }
+
+    public static String getFolder(){return Paths.get("").toAbsolutePath().toString();}
 }

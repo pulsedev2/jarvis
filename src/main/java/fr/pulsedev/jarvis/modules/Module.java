@@ -16,6 +16,8 @@ import java.util.List;
  */
 public abstract class Module {
 
+    String name;
+    List<String> imports = new ArrayList<>();
     List<String> keywords = new ArrayList<>();
     List<String> answers = new ArrayList<>();
 
@@ -24,10 +26,13 @@ public abstract class Module {
 
     }
 
-    public List<String> getKeywords() {
-        return keywords;
-    }
-
+    public void setName(String name){this.name = name;}
+    public void setImports(List<String> imports){this.imports = imports;}
+    public void setKeywords(List<String> keywords){this.keywords = keywords;}
+    public void setAnswers(List<String> answers){this.answers = answers;}
+    public String getName(){return name;}
+    public List<String> getImports(){return imports; }
+    public List<String> getKeywords() { return keywords; }
     public List<String> getAnswers() {
         return answers;
     }

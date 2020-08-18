@@ -40,13 +40,13 @@ public class PhraseRecognition implements Runnable {
         if(phrase.isACommand() || phrase.words.contains("jarvis")) {
             if(!Main.muted){
                 findArguments();
-                Module module = findRightModule();
                 if(phrase.words.contains("chute")){
                     Main.muted = true;
                     Main.play("src\\main\\resources\\go_off.wav");
                     stopThread();
                     return;
                 }
+                Module module = findRightModule();
                 if(module == null){
                     int answerIndex = new Random().nextInt(new ErrorModule(arguments).getAnswers().size());
                     Main.say(new ErrorModule(arguments).getAnswers().get(answerIndex), thread.getId());
@@ -55,6 +55,8 @@ public class PhraseRecognition implements Runnable {
                 }
                 int answerIndex = new Random().nextInt(module.getAnswers().size());
                 Main.say(module.getAnswers().get(answerIndex), thread.getId());
+                Main.echo("User: " + phrase.text);
+                Main.echo("Jarvis: " + module.getAnswers().get(answerIndex));
             }else {
                 if(phrase.words.contains("reviens")){
                     Main.muted = false;

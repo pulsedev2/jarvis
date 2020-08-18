@@ -1,0 +1,14 @@
+body{
+    background: black;
+    text-decoration-color: white;
+}
+
+p{
+    color: white;
+}
+p.jarvis{
+    color: blue;
+}
+p.user{
+    color:red;
+}

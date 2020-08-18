@@ -8,9 +8,11 @@ import com.google.common.html.HtmlEscapers;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import fr.pulsedev.jarvis.items.City;
+import fr.pulsedev.jarvis.modules.ErrorModule;
 import fr.pulsedev.jarvis.modules.Module;
 import fr.pulsedev.jarvis.stt.InfiniteStreamRecognizeOptions;
 import fr.pulsedev.jarvis.stt.recognition.PhraseRecognition;
+import fr.pulsedev.jarvis.utils.ConsoleScanner;
 import fr.pulsedev.jarvis.utils.MakeSound;
 import fr.pulsedev.jarvis.utils.PropertiesValue;
 import net.contentobjects.jnotify.JNotify;
@@ -22,7 +24,9 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,10 +66,36 @@ public class Main {
     public static Boolean muted = false;
     public static HashMap<String, City> cityHashMap = new HashMap<>();
     public static final String moduleFolder = "./modules";
+    public static Socket socket;
 
-    public static void main(String... args){
+    public static void setupSocketConnection(){
+        try {
+            Main.socketConnect("127.0.0.1", 2008);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Process launchUI() {
+        try {
+            File appDirectory = new File("app");
+            System.out.println(appDirectory.getAbsolutePath());
+            return new ProcessBuilder("npm.cmd" , "start")
+                    .directory(appDirectory)
+                    .start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String... args) throws InterruptedException {
+        while (!Objects.requireNonNull(launchUI()).isAlive());
+        Thread.sleep(17000);
         initAllModule();
         initCityList();
+        setupSocketConnection();
+        new Thread(new ConsoleScanner()).start();
 
         Main.play("src\\main\\resources\\go_on.wav");
         InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
@@ -93,15 +123,41 @@ public class Main {
         for(File module : Objects.requireNonNull(modulesFolder.listFiles())){
             try {
                 Class<? extends Module> clazz = (Class<? extends Module>) Class.forName("fr.pulsedev.jarvis.modules." + module.getName().replace(".java", ""));
-                if(!clazz.getName().equals(Module.class.getName()) && !clazz.getName().equals(Error.class.getName())){
+                if(!clazz.getName().equals(Module.class.getName()) && !clazz.getName().equals(ErrorModule.class.getName())){
                     modules.add(clazz);
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println(modules.toString());
     }
+
+    // make the connection with the socket
+    private static void socketConnect(String ip, int port) throws UnknownHostException, IOException {
+        System.out.println("[Connecting to socket...]");
+        socket = new Socket(ip, port);
+    }
+
+    // writes and receives the full message int the socket (String)
+    public static String echo(String message) {
+        try {
+            // out & in
+            PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
+            // writes str in the socket and read
+            out.println(message);
+            return in .readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // get the socket instance
+    private static Socket getSocket() {
+        return socket;
+    }
+
 
     public static void initCityList(){
         JSONParser jsonParser = new JSONParser();

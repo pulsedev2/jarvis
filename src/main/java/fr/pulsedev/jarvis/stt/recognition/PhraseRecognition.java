@@ -22,6 +22,7 @@ public class PhraseRecognition implements Runnable {
 
     private Thread thread;
     private final Phrase phrase;
+    private final String txt;
     private final HashMap<ItemsType, String> arguments = new HashMap<>();
     private final HashMap<Module, Integer> occurence = new HashMap<>();
 
@@ -31,12 +32,14 @@ public class PhraseRecognition implements Runnable {
 
     public PhraseRecognition(String phrase) {
         this.phrase = new Phrase(phrase.toLowerCase().trim());
+        this.txt = phrase;
     }
 
     @Override
     public void run() {
         assert thread != null;
         System.out.println("Phrase: " + phrase.getText());
+        Main.echo("User: " + txt);
         if(phrase.isACommand() || phrase.words.contains("jarvis")) {
             if(!Main.muted){
                 findArguments();
@@ -54,9 +57,8 @@ public class PhraseRecognition implements Runnable {
                     return;
                 }
                 int answerIndex = new Random().nextInt(module.getAnswers().size());
-                Main.say(module.getAnswers().get(answerIndex), thread.getId());
-                Main.echo("User: " + phrase.text);
                 Main.echo("Jarvis: " + module.getAnswers().get(answerIndex));
+                Main.say(module.getAnswers().get(answerIndex), thread.getId());
             }else {
                 if(phrase.words.contains("reviens")){
                     Main.muted = false;

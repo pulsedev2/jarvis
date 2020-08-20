@@ -8,9 +8,14 @@
   100% {opacity: 0; position: relative; bottom: 30px;}
 }
 
+@keyframes disappear {
+  0% {opacity: 100%;}
+  100% {opacity: 0; display: none}
+}
+
 .bubble.left {
   position: relative;
-  animation: comeFromBottom 2s 0s forwards;
+  animation: comeFromBottom 2s 2s forwards;
   bottom: 0;
 }
 
@@ -25,12 +30,17 @@
   text-align: center;
   opacity: 0;
   color: #000;
+  margin-bottom: 10px;
+}
+
+.disappear{
+  animation: disapear 2s 0s forwards;
 }
 
 .bubble.right {
   position: relative;
   left: 20%;
-  animation: comeFromBottom 2s 2s forwards;
+  animation: comeFromBottom 2s 0s forwards;
   bottom: 0;
 }
 

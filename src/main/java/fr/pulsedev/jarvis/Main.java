@@ -68,11 +68,12 @@ public class Main {
     public static final String moduleFolder = "./modules";
     public static Socket socket;
 
-    public static void setupSocketConnection(){
+    public static Boolean setupSocketConnection(){
         try {
             Main.socketConnect("127.0.0.1", 2008);
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 
@@ -91,10 +92,10 @@ public class Main {
 
     public static void main(String... args) throws InterruptedException {
         while (!Objects.requireNonNull(launchUI()).isAlive());
-        Thread.sleep(17000);
         initAllModule();
         initCityList();
-        setupSocketConnection();
+        boolean connected = setupSocketConnection();
+        while (!connected) connected = setupSocketConnection();
         new Thread(new ConsoleScanner()).start();
 
         Main.play("src\\main\\resources\\go_on.wav");

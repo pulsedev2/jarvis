@@ -34,7 +34,7 @@ Jarvis uses IBM TTS API.
 
 ## Future plan
 
-We plan to add some facial detection, and some module print in 3D with electronic. In example, we plan to make a module with a camera, a microphone and a camera in order to expend the range of jarvis.
+We plan to add some facial detection, and some module print in 3D with electronic. In example, we plan to make a module with a camera, a microphone and a speaker in order to expend the range of jarvis.
 
 ## Socket Communication
 

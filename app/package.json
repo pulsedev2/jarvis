@@ -9,6 +9,6 @@
   "author": "renardfute,niout",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^9.2.0"
+    "electron": "^9.3.0"
   }
 }
